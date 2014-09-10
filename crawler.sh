@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #.shファイルの場所に移動
 echo $0
 cd `dirname $0`
@@ -8,19 +10,19 @@ if ! [ -e cache ]; then
 fi
 
 #トップページをクロール
-curl -o cache/okutopi.html http://aucfan.com/article/
+#curl -o cache/okutopi.html http://aucfan.com/article/
 
 #オクトピのページ数を取得
-pagenum=`grep "page-number num" cache/okutopi.html|tail -n 1|sed -e "s/\t<li><a class='page-number num' href='http:\/\/aucfan.com\/article\/?paged=//g" -e "s/'>\([2-9]*\)<\/a><\/li>//g"`
+pagenum=`curl http://aucfan.com/article/ | grep "page-number num" |tail -n 1|sed -e "s/\t<li><a class='page-number num' href='http:\/\/aucfan.com\/article\/?paged=//g" -e "s/'>\([2-9]*\)<\/a><\/li>//g"`
 
 
 for i in `seq 1 $pagenum`
 do
 
-	curl -o cache/okutopi${i}.html http://aucfan.com/article/?paged\=${i}
+	#curl -o cache/okutopi${i}.html http://aucfan.com/article/?paged\=${i}
 
 	#オクトピの記事毎のurlをclassで識別し、hrefなどいらない部分を消してURL取得
-	urls=`grep "box_link" cache/okutopi${i}.html | sed -e "s/\t<a href=\"//g" -e "s/\" class=\"box_link\">//g"`
+	urls=`curl http://aucfan.com/article/?paged\=${i} |grep "box_link" | sed -e "s/\t<a href=\"//g" -e "s/\" class=\"box_link\">//g"`
 	
 	for url in $urls
 	do

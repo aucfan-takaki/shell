@@ -1,19 +1,49 @@
+#!/bin/bash
+
 #.shファイルの場所に移動
 echo $0
 cd `dirname $0`
 
 #cat cache/amespi-5664.html
 
-url=cache/nishikori-5684.html
 
-grep "class=\"entry-title" $url | sed -e "s/\t\t<h1 class=\"entry-title\">//g" -e "s/<\/h1>\t\t<div class=\"entry-meta post_meta_box\">//g"
+list=`ls cache/*.html | sed -e 's/\.html//g' -e 's/cache\///g'`
 
-year=`grep "class=\"sep" $url | grep -o "[0-9]*年" | grep -o "[0-9]*"`
 
-month=`grep "class=\"sep" $url | grep -o "[0-9]*月" | grep -o "[0-9]*"`
+for filename in $list
 
-day=`grep "class=\"sep" $url | grep -o "[0-9]*日" | grep -o "[0-9]*"`
+do
+	judge=`grep -o ${filename}\/ cache/tsv.tsv`
 
-time=`printf "%04d%02d%02d" $year $month $day`
+	if [ -e $judge ]; then 
+	
+	#filename=amespi-5664
 
-echo $time
+	file=cache/$filename.html
+
+	title=`grep "class=\"entry-title" $file | sed -e "s/\t\t<h1 class=\"entry-title\">//g" -e "s/<\/h1>\t\t<div class=\"entry-meta post_meta_box\">//g"`
+
+	echo $title
+
+	year=`grep "class=\"sep" $file | grep -o "[0-9]*年" | grep -o "[0-9]*"`
+
+	month=`grep "class=\"sep" $file | grep -o "[0-9]*月" | grep -o "[0-9]*"`
+
+	day=`grep "class=\"sep" $file | grep -o "[0-9]*日" | grep -o "[0-9]*"`
+
+	time=`printf "%04d%02d%02d" $year $month $day`
+
+	echo $time
+
+	url=http://aucfan.com/article/$filename/
+
+	echo $url
+
+	tsvdata="$filename	$time	$title	$url"
+	echo $tsvdata
+
+	echo $tsvdata >> cache/tsv.tsv
+
+	
+	fi
+done
