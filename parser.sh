@@ -34,8 +34,6 @@ do
 	url=http://aucfan.com/article/$filename/
 
 	
-
-	#tsvdata=`echo "$time,$title,$url"| tr -s ',' '\t'`
 	tsvdata="$time	$title	$url"
 	IFS=$tsvdata
 
@@ -47,8 +45,5 @@ do
 
 		
 	fi
-
-	#unexpand cache/tsv.tsv
-
 
 done
