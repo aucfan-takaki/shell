@@ -13,7 +13,7 @@ list=`ls cache/*.html | sed -e 's/\.html//g' -e 's/cache\///g'`
 for filename in $list
 
 do
-	judge=`grep -o ${filename}\/ cache/tsv.tsv`
+	judge=`grep -o ${filename} cache/tsv.tsv`
 
 	if [ -e $judge ]; then 
 	
@@ -23,8 +23,6 @@ do
 
 	title=`grep "class=\"entry-title" $file | sed -e "s/\t\t<h1 class=\"entry-title\">//g" -e "s/<\/h1>\t\t<div class=\"entry-meta post_meta_box\">//g"`
 
-	echo $title
-
 	year=`grep "class=\"sep" $file | grep -o "[0-9]*年" | grep -o "[0-9]*"`
 
 	month=`grep "class=\"sep" $file | grep -o "[0-9]*月" | grep -o "[0-9]*"`
@@ -33,17 +31,24 @@ do
 
 	time=`printf "%04d%02d%02d" $year $month $day`
 
-	echo $time
-
 	url=http://aucfan.com/article/$filename/
 
-	echo $url
+	
 
-	tsvdata="$filename	$time	$title	$url"
+	#tsvdata=`echo "$time,$title,$url"| tr -s ',' '\t'`
+	tsvdata="$time	$title	$url"
+	IFS=$tsvdata
+
+	IFS=$'\n'
+
 	echo $tsvdata
 
 	echo $tsvdata >> cache/tsv.tsv
 
-	
+		
 	fi
+
+	#unexpand cache/tsv.tsv
+
+
 done
